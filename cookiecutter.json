@@ -31,6 +31,7 @@
     "SparkPost",
     "Other SMTP"
   ],
+  "use_wagtail":"n",
   "use_async": "n",
   "use_drf": "n",
   "frontend_pipeline": ["None", "Django Compressor", "Gulp", "Webpack"],

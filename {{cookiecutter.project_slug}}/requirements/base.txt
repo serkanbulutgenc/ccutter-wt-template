@@ -49,3 +49,9 @@ drf-spectacular==0.27.2  # https://github.com/tfranzel/drf-spectacular
 {%- if cookiecutter.frontend_pipeline == 'Webpack' %}
 django-webpack-loader==3.1.0  # https://github.com/django-webpack/django-webpack-loader
 {%- endif %}
+
+# Wagtail
+# ------------------------------------------------------------------------------
+{%- if cookiecutter.use_wagtail == 'y' %}
+wagtail==6.2 #https://github.com/wagtail/wagtail/
+{%- endif %}

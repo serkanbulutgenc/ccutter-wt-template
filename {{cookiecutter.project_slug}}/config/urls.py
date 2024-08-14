@@ -15,15 +15,22 @@ from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 {%- endif %}
 
+{%- if cookiecutter.use_wagtail == 'y' %}
+from wagtail.admin import urls as wagtailadmin_urls
+from wagtail import urls as wagtail_urls
+from wagtail.documents import urls as wagtaildocs_urls
+{%- endif %}
+
+
+
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
-    path(
-        "about/",
-        TemplateView.as_view(template_name="pages/about.html"),
-        name="about",
-    ),
+    
     # Django Admin, use {% raw %}{% url 'admin:index' %}{% endraw %}
+    {%- if cookiecutter.use_wagtail == 'y' %}
     path(settings.ADMIN_URL, admin.site.urls),
+    {%- else %}
+    path(settings.ADMIN_URL, include(wagtailadmin_urls))
+    {%- endif %}
     # User management
     path("users/", include("{{ cookiecutter.project_slug }}.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
@@ -78,3 +85,14 @@ if settings.DEBUG:
         import debug_toolbar
 
         urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+
+
+{%- if cookiecutter.use_wagtail=='y' %}
+
+# Wagtail Urls
+urlpatterns +=[
+    path('documents/', include(wagtaildocs_urls)),
+    path('', include(wagtail_urls)),
+]
+
+{%- endif %}

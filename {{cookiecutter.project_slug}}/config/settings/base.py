@@ -98,6 +98,22 @@ THIRD_PARTY_APPS = [
 {%- if cookiecutter.frontend_pipeline == 'Webpack' %}
     "webpack_loader",
 {%- endif %}
+{%- if cookiecutter.use_wagtail == 'y' %}
+    # WAgtail apps    
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.embeds',
+    'wagtail.sites',
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail',
+    'modelcluster',
+    'taggit',
+{%- endif %}
 ]
 
 LOCAL_APPS = [
@@ -165,6 +181,11 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+{%- if cookiecutter.use_wagtail == 'y' %}
+    # wagtail mw
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware"
+{%- endif %}
+    
 ]
 
 # STATIC
@@ -388,5 +409,16 @@ WEBPACK_LOADER = {
 }
 
 {%- endif %}
+
+
+{%- if cookiecutter.use_wagtail == 'y' %}
+
+# Wagtail specific settings
+# ------------------------------------------------------------------------------
+WAGTAIL_SITE_NAME = "{{cookiecutter.project_name}}"
+WAGTAILADMIN_BASE_URL = 'http://example.com'
+WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'txt', 'xlsx', 'zip']
+{%- endif %}
+
 # Your stuff...
 # ------------------------------------------------------------------------------
