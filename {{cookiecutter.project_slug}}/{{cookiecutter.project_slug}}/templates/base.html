@@ -1,5 +1,5 @@
 {% raw %}
-{% load static i18n {% endraw %}
+{% load static i18n wagtailuserbar %}{% endraw %}
 
 {%- if cookiecutter.frontend_pipeline == 'Django Compressor' %}compress{%- endif %}{% raw %}%}{% endraw %}
   {%- if cookiecutter.frontend_pipeline == 'Webpack' %}{% raw %}
@@ -14,15 +14,29 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <title>
       {% block title %}
-      {% endraw %}{{ cookiecutter.project_name }}{% raw %}
-    {% endblock title %}
+          {% if page.seo_title %}
+              {{ page.seo_title }}
+          {% else %}
+              {{ page.title }}
+          {% endif %}
+      {% endblock %}
+      {% block title_suffix %}
+          | {{ settings.base.SiteSettings.title_suffix|default="Suffix" }}
+      {% endblock %}
   </title>
+
+  {# Force all links in the live preview panel to be opened in a new tab #}
+  {% if request.in_preview_panel %}
+  <base target="_blank">
+{% endif %}
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description"
-        content="{% endraw %}{{ cookiecutter.description }}{% raw %}" />
+  <meta name="description" content="{% block search_description %}{% if page.search_description %}{{ page.search_description }}{% endif %}{% endblock %}">
+
   <meta name="author"
         content="{% endraw %}{{ cookiecutter.author_name }}{% raw %}" />
   <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
+
   {% block css %}
   {%- endraw %}
   {%- if cookiecutter.frontend_pipeline in ['None', 'Django Compressor'] %}
@@ -111,79 +125,33 @@
 {% raw %}
 {% endblock javascript %}
 </head>
-<body class="{% block bodyclass %}{% endblock bodyclass %}">
-  {% block body %}
-  <div class="mb-1">
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-      <div class="container-fluid">
-        <button class="navbar-toggler navbar-toggler-right"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <a class="navbar-brand" href="{% url 'home' %}">{% endraw %}{{ cookiecutter.project_name }}{% raw %}</a>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="{% url 'home' %}">Home <span class="visually-hidden">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'about' %}">About</a>
-            </li>
-            {% if request.user.is_authenticated %}
-              <li class="nav-item">
-                <a class="nav-link"
-                   href="{% endraw %}{% if cookiecutter.username_type == "email" %}{% raw %}{% url 'users:detail' request.user.pk %}{% endraw %}{% else %}{% raw %}{% url 'users:detail' request.user.username %}{% endraw %}{% endif %}{% raw %}">{% translate "My Profile" %}</a>
-              </li>
-              <li class="nav-item">
-                {# URL provided by django-allauth/account/urls.py #}
-                <a class="nav-link" href="{% url 'account_logout' %}">{% translate "Sign Out" %}</a>
-              </li>
-            {% else %}
-              {% if ACCOUNT_ALLOW_REGISTRATION %}
-                <li class="nav-item">
-                  {# URL provided by django-allauth/account/urls.py #}
-                  <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% translate "Sign Up" %}</a>
-                </li>
-              {% endif %}
-              <li class="nav-item">
-                {# URL provided by django-allauth/account/urls.py #}
-                <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% translate "Sign In" %}</a>
-              </li>
-            {% endif %}
-          </ul>
-        </div>
-      </div>
-    </nav>
-  </div>
-  <div class="container">
-    {% if messages %}
-      {% for message in messages %}
-        <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-          {{ message }}
-          <button type="button"
-                  class="btn-close"
-                  data-bs-dismiss="alert"
-                  aria-label="Close"></button>
-        </div>
-      {% endfor %}
-    {% endif %}
-    {% block main %}
+<body class="{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}">
+  {% wagtailuserbar %}
+
+
+  {% block header %}
+            {% include "includes/header.html" %}
+        {% endblock header %}
+
+        {% block breadcrumbs %}
+            {# breadcrumbs is defined in base/templatetags/navigation_tags.py #}
+            {% breadcrumbs %}
+        {% endblock breadcrumbs %}
+
+  <main>
+
       {% block content %}
         <p>Use this document as a way to quick start any new project.</p>
       {% endblock content %}
-    {% endblock main %}
 
-  </div>
-  {% endblock body %}
+
+  </main>
+
   <!-- /container -->
   {% block modal %}
   {% endblock modal %}
-  {% block inline_javascript %}
+
+  {% block inline_js %}
     {% comment %}
     Script tags with only code, no src (defer by default). To run
     with a "defer" so that you run inline code:
@@ -193,7 +161,7 @@
       });
     </script>
     {% endcomment %}
-  {% endblock inline_javascript %}
+  {% endblock inline_js %}
 </body>
 </html>
 {%- endraw %}

@@ -24,12 +24,12 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 
 urlpatterns = [
-    
+
     # Django Admin, use {% raw %}{% url 'admin:index' %}{% endraw %}
     {%- if cookiecutter.use_wagtail == 'y' %}
-    path(settings.ADMIN_URL, admin.site.urls),
+    path(settings.ADMIN_URL, include(wagtailadmin_urls)),
     {%- else %}
-    path(settings.ADMIN_URL, include(wagtailadmin_urls))
+    path(settings.ADMIN_URL, admin.site.urls),
     {%- endif %}
     # User management
     path("users/", include("{{ cookiecutter.project_slug }}.users.urls", namespace="users")),
