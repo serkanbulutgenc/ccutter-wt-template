@@ -1,5 +1,5 @@
 {% raw %}
-{% load static i18n wagtailuserbar %}{% endraw %}
+{% load static i18n wagtailuserbar {% endraw %}
 
 {%- if cookiecutter.frontend_pipeline == 'Django Compressor' %}compress{%- endif %}{% raw %}%}{% endraw %}
   {%- if cookiecutter.frontend_pipeline == 'Webpack' %}{% raw %}
@@ -129,14 +129,9 @@
   {% wagtailuserbar %}
 
 
-  {% block header %}
-            {% include "includes/header.html" %}
-        {% endblock header %}
+  {% block header %}{% endblock header %}
 
-        {% block breadcrumbs %}
-            {# breadcrumbs is defined in base/templatetags/navigation_tags.py #}
-            {% breadcrumbs %}
-        {% endblock breadcrumbs %}
+  {% block breadcrumbs %}{% endblock breadcrumbs %}
 
   <main>
 
