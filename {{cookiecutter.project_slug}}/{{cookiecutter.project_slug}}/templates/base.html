@@ -20,9 +20,7 @@
               {{ page.title }}
           {% endif %}
       {% endblock %}
-      {% block title_suffix %}
-          | {{ settings.base.SiteSettings.title_suffix|default="Suffix" }}
-      {% endblock %}
+      {% block title_suffix %}{% endblock %}
   </title>
 
   {# Force all links in the live preview panel to be opened in a new tab #}
@@ -125,7 +123,7 @@
 {% raw %}
 {% endblock javascript %}
 </head>
-<body class="{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}">
+<body class="{% block body_class %}{% endblock %}">
   {% wagtailuserbar %}
 
 
@@ -136,7 +134,7 @@
   <main>
 
       {% block content %}
-        <p>Use this document as a way to quick start any new project.</p>
+        
       {% endblock content %}
 
 
